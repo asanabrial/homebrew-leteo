@@ -4,15 +4,20 @@
 for AI coding agents: one Rust binary over one SQLite database.
 
 ```sh
-brew install asanabrial/leteo/leteo
-```
-
-Or tap first, if you would rather type less afterwards:
-
-```sh
 brew tap asanabrial/leteo
 brew install leteo
 ```
+
+Or in one line, if you would rather not keep the tap around as a separate step:
+
+```sh
+brew install asanabrial/leteo/leteo
+```
+
+The long form is `user/tap/formula`, with the `homebrew-` prefix of this
+repository's name left implicit. It says `leteo` twice because the tap and the
+formula happen to share a name. Once tapped, the short name is enough —
+`homebrew-core` has no `leteo` to collide with, checked rather than assumed.
 
 ## What this repository is
 
