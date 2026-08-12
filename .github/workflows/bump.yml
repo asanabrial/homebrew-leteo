@@ -1,0 +1,76 @@
+name: Follow the latest release
+
+# The formula updates itself from this side rather than being pushed from the
+# other one.
+#
+# The alternative was a step in Leteo's own release workflow writing here, and
+# that needs a token with write access to this repository stored as a secret
+# over there — the one thing every other publishing route in this project got
+# rid of by moving to OIDC. Polling costs a scheduled run a day and no
+# credential at all: `GITHUB_TOKEN` is this repository's own.
+#
+# It also fails in the right direction. A release that happens while this is
+# down is picked up on the next run, whereas a push that fails is a formula
+# left behind with nobody looking.
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Bump the formula if the release moved
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          tag="$(gh release view --repo asanabrial/leteo --json tagName --jq .tagName)"
+          version="${tag#v}"
+          current="$(grep -oP '^\s*version "\K[^"]+' Formula/leteo.rb)"
+
+          if [ "$version" = "$current" ]; then
+            echo "formula is already on $version"
+            exit 0
+          fi
+          echo "formula is on $current, release is on $version"
+
+          # The checksums the release publishes, rather than ones computed here:
+          # these are the same bytes `install.sh` verifies against, and hashing
+          # a second download would only prove that this runner downloaded the
+          # same file twice.
+          sums="$(gh release download "$tag" --repo asanabrial/leteo --pattern SHA256SUMS --output - )"
+
+          sha_for() {
+            printf '%s\n' "$sums" | awk -v n="leteo-$tag-$1.tar.gz" '$2 == n || $2 == "*"n { print $1 }'
+          }
+
+          for target in aarch64-apple-darwin x86_64-apple-darwin \
+                        aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu; do
+            sha="$(sha_for "$target")"
+            [ -n "$sha" ] || { echo "no checksum published for $target"; exit 1; }
+            # The version first, then that target's line: the URL carries the
+            # version too, so replacing it before the URLs would leave nothing
+            # to match on.
+            sed -i "s|leteo-v${current}-${target}|leteo-${tag}-${target}|g" Formula/leteo.rb
+            sed -i "/${target}\.tar\.gz\"$/{n;s|sha256 \"[a-f0-9]*\"|sha256 \"${sha}\"|}" Formula/leteo.rb
+          done
+
+          sed -i "s|/download/v${current}/|/download/${tag}/|g" Formula/leteo.rb
+          sed -i "s|^  version \"${current}\"|  version \"${version}\"|" Formula/leteo.rb
+
+          grep -q "$version" Formula/leteo.rb
+          ! grep -q "v${current}-" Formula/leteo.rb
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Follow leteo $version"
+          git push
