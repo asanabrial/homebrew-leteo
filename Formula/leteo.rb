@@ -7,28 +7,28 @@
 class Leteo < Formula
   desc "Local-first persistent memory for AI coding agents"
   homepage "https://github.com/asanabrial/leteo"
-  version "0.3.0"
+  version "0.4.2"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/asanabrial/leteo/releases/download/v0.3.0/leteo-v0.3.0-aarch64-apple-darwin.tar.gz"
-      sha256 "cebbb0438d544d81ed43716a77db476dac7cb5145275dbcf10cadfaed22d5070"
+      url "https://github.com/asanabrial/leteo/releases/download/v0.4.2/leteo-v0.4.2-aarch64-apple-darwin.tar.gz"
+      sha256 "6480f70e967ec9f7e3bd53669623a92fc6989af41857016929db8aaf2eb824e1"
     end
     on_intel do
-      url "https://github.com/asanabrial/leteo/releases/download/v0.3.0/leteo-v0.3.0-x86_64-apple-darwin.tar.gz"
-      sha256 "51b0c5d7de208e7f2ba292627afbc7107a8a8fdc90a7f11e964714c85af699d3"
+      url "https://github.com/asanabrial/leteo/releases/download/v0.4.2/leteo-v0.4.2-x86_64-apple-darwin.tar.gz"
+      sha256 "7de6d13a9b8ac25b3704819916360c61a70264413563f8a9a9e18349911391c3"
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/asanabrial/leteo/releases/download/v0.3.0/leteo-v0.3.0-aarch64-unknown-linux-gnu.tar.gz"
-      sha256 "bb70595fd3a1fd2239d189bf46e0c4979471531f969353d4aef4646c18634e89"
+      url "https://github.com/asanabrial/leteo/releases/download/v0.4.2/leteo-v0.4.2-aarch64-unknown-linux-gnu.tar.gz"
+      sha256 "5b7741cf1d778a9b84da5999533ce0589d4cc875255ebb4b16d2c0edc469f854"
     end
     on_intel do
-      url "https://github.com/asanabrial/leteo/releases/download/v0.3.0/leteo-v0.3.0-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "afd3e9a4e3c8f968ae3d59a2535778f205c5a42691a9fd371d782cadc85f6b32"
+      url "https://github.com/asanabrial/leteo/releases/download/v0.4.2/leteo-v0.4.2-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "2fe5afce8ddaa6b422ffc55fd97b2874135eeedf1d773b6505132eb48c836dc5"
     end
   end
 
